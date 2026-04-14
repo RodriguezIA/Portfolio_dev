@@ -1,13 +1,16 @@
 ---
+import type { Lang } from "../i18n/ui";
+
 interface Props {
   title: string;
+  lang: Lang;
 }
 
-const { title } = Astro.props;
+const { title, lang } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <title>{title} | Software Developer</title>
@@ -18,6 +21,11 @@ const { title } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="canonical" href="https://edgardev.com.mx/" />
+
+    <!-- Alternate language links for SEO -->
+    <link rel="alternate" hreflang="en" href="https://edgardev.com.mx/" />
+    <link rel="alternate" hreflang="es" href="https://edgardev.com.mx/es/" />
+    <link rel="alternate" hreflang="x-default" href="https://edgardev.com.mx/" />
 
     <link
       rel="preload"
@@ -57,6 +65,53 @@ const { title } = Astro.props;
         "jobTitle": "Software Developer",
         "description": "Software Developer building interactive and seamless digital experiences."
       }
+    </script>
+
+    <!-- Language detection & auto-redirect (runs before render to avoid flash) -->
+    <script is:inline>
+      (function () {
+        var SPANISH_COUNTRIES = [
+          "MX","ES","AR","CO","CL","PE","VE","EC","GT","CU","BO","DO",
+          "HN","PY","SV","NI","CR","PA","UY","GQ","PR",
+        ];
+        var STORAGE_KEY = "preferred-lang";
+
+        function redirect(lang) {
+          var isEs = window.location.pathname.startsWith("/es");
+          if (lang === "es" && !isEs) {
+            window.location.replace("/es/");
+          } else if (lang === "en" && isEs) {
+            window.location.replace("/");
+          }
+        }
+
+        // 1. Respect stored preference
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored === "en" || stored === "es") {
+          redirect(stored);
+          return;
+        }
+
+        // 2. First visit — check browser language
+        var browserLang = (navigator.language || "").toLowerCase();
+        if (browserLang.startsWith("es")) {
+          localStorage.setItem(STORAGE_KEY, "es");
+          redirect("es");
+          return;
+        }
+
+        // 3. Fallback — IP-based country detection (async, no flash since 'en' is default)
+        fetch("https://ip-api.com/json/?fields=countryCode")
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            var detectedLang = SPANISH_COUNTRIES.includes(data.countryCode) ? "es" : "en";
+            localStorage.setItem(STORAGE_KEY, detectedLang);
+            redirect(detectedLang);
+          })
+          .catch(function () {
+            localStorage.setItem(STORAGE_KEY, "en");
+          });
+      })();
     </script>
   </head>
   <body class="bg-[--background] sm:px-28 lg:px-20 px-9">
@@ -98,8 +153,6 @@ const { title } = Astro.props;
     color: var(--background);
   }
 
-  /* Scrollbar styles */
-
   ::-webkit-scrollbar {
     width: 15px;
   }
@@ -118,7 +171,6 @@ const { title } = Astro.props;
     background: var(--pink);
   }
 
-  /* Scrollbar styles for Firefox */
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--line) var(--container);

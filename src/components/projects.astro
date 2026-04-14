@@ -1,5 +1,14 @@
 ---
 import ProjectModal from "../React/ProjectModal.tsx";
+import type { Lang } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <section
@@ -7,8 +16,8 @@ import ProjectModal from "../React/ProjectModal.tsx";
   class="py-12 border-t border-[#ffffff10] text-[var(--white)]"
 >
   <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">My work</h2>
-    <h3 class="text-4xl md:text-5xl font-medium mb-8">Projects</h3>
-    <ProjectModal client:load />
+    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">{t("projects.eyebrow")}</h2>
+    <h3 class="text-4xl md:text-5xl font-medium mb-8">{t("projects.title")}</h3>
+    <ProjectModal client:load lang={lang} />
   </div>
 </section>

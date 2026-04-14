@@ -1,6 +1,14 @@
 ---
 import LikeButton from "../React/LikeButton.tsx";
+import type { Lang } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
 
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 const currentYear = new Date().getFullYear();
 ---
 
@@ -49,8 +57,8 @@ const currentYear = new Date().getFullYear();
       <div class="flex flex-col items-center lg:items-end gap-3">
         {
           [
-            { desc: "Built with", name: "Astro", icon: "/svg/astro.svg", alt: "Astro Logo" },
-            { desc: "Styled with", name: "TailwindCSS", icon: "/svg/tailwindcss.svg", alt: "TailwindCSS Logo" },
+            { desc: t("footer.builtWith"), name: "Astro", icon: "/svg/astro.svg", alt: "Astro Logo" },
+            { desc: t("footer.styledWith"), name: "TailwindCSS", icon: "/svg/tailwindcss.svg", alt: "TailwindCSS Logo" },
           ].map((tech) => (
             <div class="flex items-center space-x-3">
               <span class="text-[var(--white-icon)] text-sm">{tech.desc}</span>
@@ -65,14 +73,12 @@ const currentYear = new Date().getFullYear();
           ))
         }
       </div>
-
     </div>
 
     <div class="mt-12 pt-8 border-t border-[#ffffff10]">
       <p class="text-center text-sm text-[var(--white-icon)]">
-        <!-- If you are using this template, by MIT License you can't remove the copyright notice -->
         Copyright © {currentYear}
-        <a href="https://github.com/RodriguezIA">Edgar Rodriguez</a>. All rights reserved.
+        <a href="https://github.com/RodriguezIA">Edgar Rodriguez</a>. {t("footer.rights")}
       </p>
     </div>
   </div>

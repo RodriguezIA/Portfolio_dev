@@ -4,7 +4,9 @@
       "Bash(npm run:*)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:cdn.jsdelivr.net)",
-      "Bash(curl -sL \"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg\" -o \"C:/Users/Edgar/Documents/software_dev/Portfolio_dev/public/svg/linux.svg\")"
+      "Bash(curl -sL \"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg\" -o \"C:/Users/Edgar/Documents/software_dev/Portfolio_dev/public/svg/linux.svg\")",
+      "Bash(pnpm dev:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321)"
     ]
   }
 }
