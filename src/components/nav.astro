@@ -60,7 +60,7 @@ const otherLangLabel = lang === "en" ? "ES" : "EN";
         }
 
         <!-- Language switcher -->
-        <li class="flex-none">
+        <li class="flex-1 md:flex-none">
           <a
             href={otherLangHref}
             id="lang-switch"
@@ -82,7 +82,7 @@ const otherLangLabel = lang === "en" ? "ES" : "EN";
                 ></path>
               </svg>
             </span>
-            <span class="md:hidden text-[10px]">{otherLangLabel}</span>
+            <span class="md:hidden">{otherLangLabel}</span>
 
             <!-- Desktop: pill badge -->
             <span
