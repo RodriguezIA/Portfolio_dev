@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "Bash(curl -sL \"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg\" -o \"C:/Users/Edgar/Documents/software_dev/Portfolio_dev/public/svg/linux.svg\")"
     ]
   }
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const CategoryIcons = {
-  "Web Development": (
+  "Frontend Development": (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
@@ -11,24 +11,24 @@ const CategoryIcons = {
       <path d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM20 11H4V19H20V11ZM20 5H4V9H20V5ZM11 6V8H9V6H11ZM7 6V8H5V6H7Z"></path>
     </svg>
   ),
-  "Mobile Development": (
+  "Backend Development": (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
       className="w-6 h-6 text-[var(--sec)] opacity-70"
     >
-      <path d="M7 4V20H17V4H7ZM6 2H18C18.5523 2 19 2.44772 19 3V21C19 21.5523 18.5523 22 18 22H6C5.44772 22 5 21.5523 5 21V3C5 2.44772 5.44772 2 6 2ZM12 17C12.5523 17 13 17.4477 13 18C13 18.5523 12.5523 19 12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17Z"></path>
+      <path d="M5 12.5C5 12.8708 5.43533 13.3875 6.47329 13.8431C7.45439 14.2748 8.86764 14.5 10.5 14.5C12.1324 14.5 13.5456 14.2748 14.5267 13.8431C15.5647 13.3875 16 12.8708 16 12.5V10.3287C14.6807 11.0574 12.6289 11.5 10.5 11.5C8.37108 11.5 6.31928 11.0574 5 10.3287V12.5ZM16 14.8287C14.6807 15.5574 12.6289 16 10.5 16C8.37108 16 6.31928 15.5574 5 14.8287V17C5 17.3708 5.43533 17.8875 6.47329 18.3431C7.45439 18.7748 8.86764 19 10.5 19C12.1324 19 13.5456 18.7748 14.5267 18.3431C15.5647 17.8875 16 17.3708 16 17V14.8287ZM3 17V8.5C3 6.567 6.35786 5 10.5 5C14.6421 5 18 6.567 18 8.5V17C18 18.933 14.6421 20.5 10.5 20.5C6.35786 20.5 3 18.933 3 17ZM10.5 9.5C12.1324 9.5 13.5456 9.27477 14.5267 8.84315C15.5647 8.38754 16 7.87077 16 7.5C16 7.12923 15.5647 6.61246 14.5267 6.15685C13.5456 5.72523 12.1324 5.5 10.5 5.5C8.86764 5.5 7.45439 5.72523 6.47329 6.15685C5.43533 6.61246 5 7.12923 5 7.5C5 7.87077 5.43533 8.38754 6.47329 8.84315C7.45439 9.27477 8.86764 9.5 10.5 9.5Z"></path>
     </svg>
   ),
-  "UI/UX Design & Prototyping": (
+  "Despliegue y Mantenimiento": (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
       className="w-6 h-6 text-[var(--sec)] opacity-70"
     >
-      <path d="M5.7646 7.99998L5.46944 7.26944C5.26255 6.75737 5.50995 6.17454 6.02202 5.96765L15.2939 2.22158C15.8059 2.01469 16.3888 2.26209 16.5956 2.77416L22.2147 16.6819C22.4216 17.194 22.1742 17.7768 21.6622 17.9837L12.3903 21.7298C11.8783 21.9367 11.2954 21.6893 11.0885 21.1772L11.0002 20.9586V21H7.00021C6.44792 21 6.00021 20.5523 6.00021 20V19.7303L2.65056 18.377C2.13849 18.1701 1.89109 17.5873 2.09798 17.0752L5.7646 7.99998ZM8.00021 19H10.2089L8.00021 13.5333V19ZM6.00021 12.7558L4.32696 16.8972L6.00021 17.6084V12.7558ZM7.69842 7.44741L12.5683 19.5008L19.9858 16.5039L15.1159 4.45055L7.69842 7.44741ZM10.6766 9.47974C10.1645 9.68663 9.5817 9.43924 9.37481 8.92717C9.16792 8.4151 9.41532 7.83227 9.92739 7.62538C10.4395 7.41849 11.0223 7.66588 11.2292 8.17795C11.4361 8.69002 11.1887 9.27286 10.6766 9.47974Z"></path>
+      <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20ZM13 12V7H11V13H17V11H13Z"></path>
     </svg>
   ),
 };
@@ -37,19 +37,23 @@ const SkillsList = () => {
   const [openItem, setOpenItem] = useState<string | null>(null);
 
   const skills = {
-    "Web Development": [
+    "Frontend Development": [
       "Single Page Applications (SPAs)",
-      "Landing pages and business websites",
-      "Portfolio websites",
+      "Landing pages y sitios corporativos",
+      "Portafolios y sitios personales",
+      "Diseño responsive con TailwindCSS",
     ],
-    "Mobile Development": [
-      "Mobile-friendly web apps",
-      "React Native mobile apps",
+    "Backend Development": [
+      "APIs REST y GraphQL",
+      "Servicios con Node.js, FastAPI y PHP",
+      "Bases de datos SQL y NoSQL",
+      "Autenticación y autorización",
     ],
-    "UI/UX Design & Prototyping": [
-      "UI design with Figma & Canva",
-      "UX research & improvements",
-      "Prototyping for websites & mobile apps",
+    "Despliegue y Mantenimiento": [
+      "Contenedores con Docker",
+      "Administración de servidores Linux",
+      "CI/CD y automatización",
+      "Monitoreo y mantenimiento de servicios",
     ],
   };
 
