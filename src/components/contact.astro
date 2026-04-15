@@ -78,7 +78,7 @@ const t = useTranslations(lang);
       </div>
 
       <!-- Right: Chatbot -->
-      <ChatBot client:load lang={lang} />
+      <ChatBot client:only="react" lang={lang} />
     </div>
   </div>
 </section>

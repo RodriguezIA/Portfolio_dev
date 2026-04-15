@@ -42,7 +42,7 @@ const projects: Project[] = [
       es: "Implementación en Java del clásico juego de puzzles Puyo Puyo usando Java Swing para la interfaz gráfica. Incluye mecánicas de coincidencia de colores donde grupos de 4+ puyos del mismo color se eliminan, física de gravedad, controles por teclado y algoritmo BFS para detección de grupos.",
     },
     tech: ["Java", "Java Swing", "OpenJDK"],
-    priority: 2,
+    priority: 3,
     position: "bottom",
     gallery: [
       {
@@ -66,7 +66,7 @@ const projects: Project[] = [
       es: "Servidor FastAPI para extracción de texto en imágenes usando PaddleOCR v5. Procesa imágenes directamente desde URL sin necesidad de subir archivos, soporta OCR multi-idioma (español, inglés y más), filtrado por confianza y eliminación automática de archivos temporales. Incluye cobertura completa de pruebas con pytest y httpx.",
     },
     tech: ["Python", "FastAPI", "PaddleOCR", "Pytest", "httpx"],
-    priority: 3,
+    priority: 2,
     position: "center",
   },
 ];

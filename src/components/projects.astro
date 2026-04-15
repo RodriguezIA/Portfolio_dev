@@ -18,6 +18,6 @@ const t = useTranslations(lang);
   <div class="max-w-5xl mx-auto">
     <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">{t("projects.eyebrow")}</h2>
     <h3 class="text-4xl md:text-5xl font-medium mb-8">{t("projects.title")}</h3>
-    <ProjectModal client:load lang={lang} />
+    <ProjectModal client:only="react" lang={lang} />
   </div>
 </section>

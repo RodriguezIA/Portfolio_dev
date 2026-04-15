@@ -12,7 +12,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const timeline = [0, 1, 2, 3] as const;
+const timeline = [0, 1, 2, 3, 4] as const;
 ---
 
 <section class="text-[var(--white)] mt-12 md:mt-0" id="home">
@@ -23,7 +23,7 @@ const timeline = [0, 1, 2, 3] as const;
       <!-- LetterGlitch fondo absoluto -->
       <div class="absolute inset-0 -z-10 opacity-[0.22]">
         <LetterGlitch
-          client:load
+          client:only="react"
           glitchColors={["#5e4491", "#a476ff", "#241a38"]}
           glitchSpeed={33}
           centerVignette={false}
@@ -96,7 +96,7 @@ const timeline = [0, 1, 2, 3] as const;
 
     <!-- What I do + When section -->
     <div class="flex flex-col lg:flex-row items-start gap-8 lg:gap-16">
-      <SkillsList client:load lang={lang} />
+      <SkillsList client:only="react" lang={lang} />
 
       <!-- When? timeline -->
       <div class="text-left pt-3 md:pt-9 w-full lg:flex-1">
@@ -127,7 +127,7 @@ const timeline = [0, 1, 2, 3] as const;
                   {t(`when.${i}.role` as any)}
                 </h4>
                 <p class="text-[var(--white-icon)] text-sm mt-1">
-                  {t(`when.${i}.place` as any)}
+                  {t(`when.${i}.place` as any) as string}
                 </p>
               </div>
             </div>
