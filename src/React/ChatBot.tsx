@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ui, defaultLang, type Lang } from "../i18n/ui";
 
-// ⚠️  The API key is exposed client-side (PUBLIC_ prefix).
-// Acceptable for a personal portfolio — keep usage limits on your DeepSeek account.
-const API_KEY = (import.meta as any).env?.PUBLIC_DEEPSEEK_API_KEY as string | undefined;
+const API_BASE = ((import.meta as any).env?.PUBLIC_API_BASE as string | undefined) ?? "http://localhost:3000";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -71,42 +69,6 @@ function bumpLimit(): DailyLimit {
   try { localStorage.setItem(LIMIT_KEY, JSON.stringify(l)); } catch {}
   return l;
 }
-
-// ── System prompt ─────────────────────────────────────────────────────────────
-
-const SYSTEM_PROMPT = `You are the portfolio assistant for Edgar Alan Rodriguez Amador, a Full Stack Software Developer based in Monterrey, México.
-
-Your ONLY two purposes are:
-1. Explain Edgar's projects — describe them in detail and answer follow-up questions naturally.
-2. Help visitors contact Edgar or relay a message to him.
-
-If the user asks about anything else, acknowledge it kindly and redirect back to one of these two topics.
-
-EDGAR'S BACKGROUND (for context only — don't recite this unless relevant):
-- Currently Software Developer at Jelp (Mar 2025 – present), on-site in Monterrey.
-- Previously Software Engineer at Industrial Code (Jan 2022 – Mar 2025), led product development using React, TypeScript, FastAPI, PyTorch, Node.js, SQL/NoSQL.
-- Freelance Frontend Developer at Tresite (Sep–Dec 2023), remote side project.
-- Development Intern at NukleOS® (May 2021 – Jan 2022).
-- Software Developer Intern at BLUIT S.R.L. (Jan–May 2020), built a Java/Spring Boot geolocation API for a delivery app.
-
-EDGAR'S PROJECTS:
-• PromotorIA — AI-powered marketing automation platform. Stack: React, Node.js, AI/ML integrations. Currently in active development. Helps businesses automate their marketing workflows using AI.
-• Puyo Puyo Game — Java desktop game replicating Puyo Puyo mechanics. Uses BFS algorithm to detect connected groups of same-color pieces. Demonstrates data structures and game logic.
-• PaddleOCR API — FastAPI server that exposes PaddleOCR v5 for image-to-text extraction. Designed for easy Docker deployment and integration into other services.
-
-HOW TO CONTACT EDGAR:
-• Email: edgaralanra@gmail.com
-• GitHub: github.com/RodriguezIA
-• LinkedIn: linkedin.com/in/edgar-alan-rodriguez-amador-3745b8148
-If the user wants to leave a message for Edgar, collect their name and message, then show them the email link.
-
-CONVERSATION RULES:
-- Be warm, natural, and concise. Use short paragraphs — each idea in its own paragraph, separated by a blank line.
-- Ask follow-up questions to keep the dialogue flowing naturally.
-- Guide the user: if they haven't specified a topic, ask whether they'd like to know about Edgar's projects or how to contact him.
-- When the conversation reaches a natural conclusion (user says goodbye, thanks, or their need is fully met), close warmly AND append the exact token [END] at the very end of your message — no space before it.
-- Do NOT append [END] while the conversation is still ongoing.
-- Respond in the same language the user writes in (Spanish or English).`;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -304,54 +266,23 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
     session.lastActivity = Date.now();
     saveSession(session);
 
-    // No API key fallback
-    if (!API_KEY) {
-      const fallback =
-        lang === "es"
-          ? "El chatbot aún no está configurado. Puedes contactar a Edgar directamente en edgaralanra@gmail.com"
-          : "The chatbot isn't configured yet. You can reach Edgar directly at edgaralanra@gmail.com";
-      await new Promise((r) => setTimeout(r, 600)); // brief typing delay
-      setMessages((prev) => [...prev, { role: "assistant", content: fallback }]);
-      session.messages.push({ role: "assistant", content: fallback });
-      saveSession(session);
-      setIsStreaming(false);
-      return;
-    }
-
-    // ── Fetch (no streaming — simulated typing is done locally) ─────────────
+    // ── Fetch through backend proxy ──────────────────────────────────────────
 
     // Local accumulator for sealed paragraphs
     let localSealed: string[] = [];
 
     try {
-      const res = await fetch("https://api.deepseek.com/chat/completions", {
+      const res = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...messagesForAPI,
-          ],
-          max_tokens: 300,
-          temperature: 0.75,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: messagesForAPI }),
       });
 
       if (!res.ok) throw new Error(`API error ${res.status}`);
 
-      const data = await res.json();
-      let reply: string = data.choices?.[0]?.message?.content ?? t("chat.error");
-
-      // Detect end-of-conversation signal
-      let conversationEnded = false;
-      if (reply.includes("[END]")) {
-        reply = reply.replace(/\[END\]/g, "").trim();
-        conversationEnded = true;
-      }
+      const data: { reply: string; ended: boolean } = await res.json();
+      let reply: string = data.reply || t("chat.error");
+      const conversationEnded = data.ended;
 
       // Split into paragraphs — each becomes its own bubble
       const paragraphs = reply.split("\n\n").map((p) => p.trim()).filter(Boolean);
