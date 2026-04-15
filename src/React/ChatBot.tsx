@@ -209,6 +209,7 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const isFirstRender = useRef(true);
+  const typingCancelledRef = useRef(false);
 
   // ── Init ───────────────────────────────────────────────────────────────────
 
@@ -278,17 +279,28 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
     }
 
     setInput("");
+    typingCancelledRef.current = false;
     const userMsg: Message = { role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
     setIsStreaming(true);
     setSealedBubbles([]);
     setActiveBubble("");
 
-    const updatedSessionMsgs: StoredMessage[] = [
-      ...session.messages,
+    // Clean up any orphaned trailing user messages from a previous failed stream.
+    // The API requires strictly alternating user/assistant turns.
+    const cleanedHistory = [...session.messages];
+    while (cleanedHistory.length > 0 && cleanedHistory[cleanedHistory.length - 1].role === "user") {
+      cleanedHistory.pop();
+    }
+
+    // Build the messages for the API — don't persist yet, only save once we
+    // have a complete user+assistant exchange (see bottom of try block).
+    const messagesForAPI: StoredMessage[] = [
+      ...cleanedHistory,
       { role: "user", content: text },
     ];
-    session.messages = updatedSessionMsgs;
+
+    session.messages = cleanedHistory; // keep clean history in memory
     session.lastActivity = Date.now();
     saveSession(session);
 
@@ -306,20 +318,10 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
       return;
     }
 
-    // ── Streaming request ────────────────────────────────────────────────────
+    // ── Fetch (no streaming — simulated typing is done locally) ─────────────
 
-    // Local accumulators (not state, to avoid stale closures)
+    // Local accumulator for sealed paragraphs
     let localSealed: string[] = [];
-    let localActive = "";
-
-    const sealParagraph = (text: string) => {
-      const trimmed = text.trim();
-      if (!trimmed) return;
-      localSealed = [...localSealed, trimmed];
-      setSealedBubbles([...localSealed]);
-      localActive = "";
-      setActiveBubble("");
-    };
 
     try {
       const res = await fetch("https://api.deepseek.com/chat/completions", {
@@ -332,86 +334,62 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
           model: "deepseek-chat",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            ...updatedSessionMsgs,
+            ...messagesForAPI,
           ],
           max_tokens: 500,
           temperature: 0.75,
-          stream: true,
         }),
       });
 
       if (!res.ok) throw new Error(`API error ${res.status}`);
 
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let lineBuffer = "";
+      const data = await res.json();
+      let reply: string = data.choices?.[0]?.message?.content ?? t("chat.error");
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const rawLines = (lineBuffer + chunk).split("\n");
-        lineBuffer = rawLines.pop() ?? "";
-
-        for (const line of rawLines) {
-          const trimmed = line.trim();
-          if (!trimmed.startsWith("data: ")) continue;
-          const data = trimmed.slice(6);
-          if (data === "[DONE]") continue;
-
-          try {
-            const parsed = JSON.parse(data);
-            const delta: string = parsed.choices?.[0]?.delta?.content ?? "";
-            if (!delta) continue;
-
-            // Check for paragraph breaks in the incoming delta
-            if (delta.includes("\n\n")) {
-              const parts = (localActive + delta).split("\n\n");
-              // All but the last are complete paragraphs → seal them
-              for (let i = 0; i < parts.length - 1; i++) {
-                sealParagraph(parts[i]);
-              }
-              // The last part is the new active bubble
-              localActive = parts[parts.length - 1];
-            } else {
-              localActive += delta;
-            }
-
-            setActiveBubble(localActive);
-          } catch {
-            // Malformed SSE chunk — skip
-          }
-        }
-      }
-
-      // ── Stream finished ──────────────────────────────────────────────────
-
-      // Seal the last active bubble if it has content
-      if (localActive.trim()) {
-        localSealed = [...localSealed, localActive.trim()];
-      }
-
-      // Detect [END] signal in last bubble
+      // Detect end-of-conversation signal
       let conversationEnded = false;
-      if (localSealed.length > 0) {
-        const last = localSealed[localSealed.length - 1];
-        if (last.includes("[END]")) {
-          localSealed[localSealed.length - 1] = last.replace(/\[END\]/g, "").trim();
-          conversationEnded = true;
+      if (reply.includes("[END]")) {
+        reply = reply.replace(/\[END\]/g, "").trim();
+        conversationEnded = true;
+      }
+
+      // Split into paragraphs — each becomes its own bubble
+      const paragraphs = reply.split("\n\n").map((p) => p.trim()).filter(Boolean);
+
+      // ── Animate each paragraph with a local typing effect ─────────────────
+      for (let pIdx = 0; pIdx < paragraphs.length; pIdx++) {
+        if (typingCancelledRef.current) break;
+
+        const para = paragraphs[pIdx];
+
+        // Type the paragraph character by character
+        const BATCH = 2;   // chars per tick
+        const TICK  = 12;  // ms between ticks (~167 chars/sec)
+        for (let i = BATCH; i <= para.length; i += BATCH) {
+          if (typingCancelledRef.current) break;
+          setActiveBubble(para.slice(0, i));
+          await new Promise((r) => setTimeout(r, TICK));
+        }
+        setActiveBubble(para); // ensure full text is visible
+
+        // Seal paragraph → becomes a committed bubble
+        localSealed = [...localSealed, para];
+        setSealedBubbles([...localSealed]);
+        setActiveBubble("");
+
+        // Brief pause between paragraphs (feels like separate messages arriving)
+        if (pIdx < paragraphs.length - 1) {
+          await new Promise((r) => setTimeout(r, 300));
         }
       }
 
-      // Filter empties and commit to messages
-      const finalBubbles = localSealed.filter((b) => b.trim());
-      const newMessages: Message[] = finalBubbles.map((content) => ({
-        role: "assistant" as const,
-        content,
-      }));
-
-      // Save full response to session (joined for API context)
-      const fullText = finalBubbles.join("\n\n");
-      session.messages.push({ role: "assistant", content: fullText });
+      // ── Persist complete exchange ──────────────────────────────────────────
+      const fullText = paragraphs.join("\n\n");
+      session.messages = [
+        ...cleanedHistory,
+        { role: "user", content: text },
+        { role: "assistant", content: fullText },
+      ];
       session.lastActivity = Date.now();
 
       if (conversationEnded) {
@@ -421,7 +399,11 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
 
       saveSession(session);
 
-      // Commit — clear streaming state and add messages atomically
+      // Commit bubbles to messages and clear streaming state
+      const newMessages: Message[] = localSealed.map((content) => ({
+        role: "assistant" as const,
+        content,
+      }));
       setMessages((prev) => [...prev, ...newMessages]);
       setSealedBubbles([]);
       setActiveBubble("");
