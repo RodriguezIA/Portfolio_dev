@@ -68,38 +68,71 @@ const otherLangLabel = lang === "en" ? "ES" : "EN";
             aria-label={`Switch to ${otherLang === "en" ? "English" : "Español"}`}
             class="flex flex-col items-center gap-1 text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors text-xs md:text-sm font-medium group relative"
           >
-            <!-- Globe icon (mobile) -->
-            <span class="md:hidden flex items-center justify-center w-6 h-6">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="currentColor"
-              >
-                <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2a8 8 0 0 1 5.29 2.03c-.42.12-.82.3-1.1.62-.46.52-.46 1.3-.46 1.3s-.42.1-.74.46c-.32.36-.32.88-.32.88H13.5c-.28 0-.5.22-.5.5v1c0 .28.22.5.5.5h.5v.5c0 .28.22.5.5.5s.5-.22.5-.5v-.5h.5c.28 0 .5-.22.5-.5v-.5h.5c0-.56.28-1.04.7-1.34A8 8 0 0 1 20 12a8 8 0 0 1-8 8 8 8 0 0 1-8-8 8 8 0 0 1 8-8zm-3.5 4c-.83 0-1.5.67-1.5 1.5v3c0 .83.67 1.5 1.5 1.5h3c.83 0 1.5-.67 1.5-1.5v-3c0-.83-.67-1.5-1.5-1.5h-3z"
-                ></path>
-              </svg>
+            <!-- Flag icon (mobile) -->
+            <span class="md:hidden flex items-center justify-center w-6 h-5 overflow-hidden rounded-sm">
+              {lang === "en" ? (
+                <!-- Mexico flag -->
+                <svg viewBox="0 0 21 14" width="21" height="14" xmlns="http://www.w3.org/2000/svg">
+                  <defs><clipPath id="mx-clip-mob"><rect width="21" height="14" rx="2"/></clipPath></defs>
+                  <g clip-path="url(#mx-clip-mob)">
+                    <rect width="7" height="14" fill="#006847"/>
+                    <rect x="7" width="7" height="14" fill="#FFFFFF"/>
+                    <rect x="14" width="7" height="14" fill="#CE1126"/>
+                    <ellipse cx="10.5" cy="7" rx="1.8" ry="1.4" fill="#8B6914" opacity="0.55"/>
+                  </g>
+                </svg>
+              ) : (
+                <!-- US flag -->
+                <svg viewBox="0 0 20 13" width="20" height="13" xmlns="http://www.w3.org/2000/svg">
+                  <defs><clipPath id="us-clip-mob"><rect width="20" height="13" rx="2"/></clipPath></defs>
+                  <g clip-path="url(#us-clip-mob)">
+                    <rect width="20" height="13" fill="#B22234"/>
+                    <rect y="1" width="20" height="1" fill="#FFFFFF"/>
+                    <rect y="3" width="20" height="1" fill="#FFFFFF"/>
+                    <rect y="5" width="20" height="1" fill="#FFFFFF"/>
+                    <rect y="7" width="20" height="1" fill="#FFFFFF"/>
+                    <rect y="9" width="20" height="1" fill="#FFFFFF"/>
+                    <rect y="11" width="20" height="1" fill="#FFFFFF"/>
+                    <rect width="8" height="7" fill="#3C3B6E"/>
+                  </g>
+                </svg>
+              )}
             </span>
             <span class="md:hidden">{otherLangLabel}</span>
 
             <!-- Desktop: pill badge -->
             <span
-              class="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full border border-[var(--white-icon-tr)] bg-[#1414149c] hover:border-[var(--sec)] transition-all duration-200 text-sm"
+              class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--white-icon-tr)] bg-[#1414149c] hover:border-[var(--sec)] transition-all duration-200 text-sm"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="14"
-                height="14"
-                fill="currentColor"
-                class="opacity-70"
-              >
-                <path
-                  d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56A8.014 8.014 0 0 1 18.93 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.81 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.07 16zm2.95-8H5.07a7.987 7.987 0 0 1 4.33-3.56C8.8 5.55 8.34 6.75 8.02 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.65-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.35-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.014 8.014 0 0 1-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"
-                ></path>
-              </svg>
+              <span class="flex items-center overflow-hidden rounded-sm" style="line-height:0">
+                {lang === "en" ? (
+                  <!-- Mexico flag -->
+                  <svg viewBox="0 0 21 14" width="21" height="14" xmlns="http://www.w3.org/2000/svg">
+                    <defs><clipPath id="mx-clip-desk"><rect width="21" height="14" rx="2"/></clipPath></defs>
+                    <g clip-path="url(#mx-clip-desk)">
+                      <rect width="7" height="14" fill="#006847"/>
+                      <rect x="7" width="7" height="14" fill="#FFFFFF"/>
+                      <rect x="14" width="7" height="14" fill="#CE1126"/>
+                      <ellipse cx="10.5" cy="7" rx="1.8" ry="1.4" fill="#8B6914" opacity="0.55"/>
+                    </g>
+                  </svg>
+                ) : (
+                  <!-- US flag -->
+                  <svg viewBox="0 0 20 13" width="20" height="13" xmlns="http://www.w3.org/2000/svg">
+                    <defs><clipPath id="us-clip-desk"><rect width="20" height="13" rx="2"/></clipPath></defs>
+                    <g clip-path="url(#us-clip-desk)">
+                      <rect width="20" height="13" fill="#B22234"/>
+                      <rect y="1" width="20" height="1" fill="#FFFFFF"/>
+                      <rect y="3" width="20" height="1" fill="#FFFFFF"/>
+                      <rect y="5" width="20" height="1" fill="#FFFFFF"/>
+                      <rect y="7" width="20" height="1" fill="#FFFFFF"/>
+                      <rect y="9" width="20" height="1" fill="#FFFFFF"/>
+                      <rect y="11" width="20" height="1" fill="#FFFFFF"/>
+                      <rect width="8" height="7" fill="#3C3B6E"/>
+                    </g>
+                  </svg>
+                )}
+              </span>
               {otherLangLabel}
             </span>
           </a>

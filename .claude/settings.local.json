@@ -6,7 +6,25 @@
       "WebFetch(domain:cdn.jsdelivr.net)",
       "Bash(curl -sL \"https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg\" -o \"C:/Users/Edgar/Documents/software_dev/Portfolio_dev/public/svg/linux.svg\")",
       "Bash(pnpm dev:*)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4321)",
+      "Bash(curl -s https://api.github.com/repos/RodriguezIA/paddleOCR)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in ['name','description','language','topics','html_url','homepage','stargazers_count','forks_count'] if k in d}, indent=2\\)\\)\")",
+      "Bash(curl -s https://raw.githubusercontent.com/RodriguezIA/paddleOCR/main/README.md)",
+      "Bash(curl -s https://raw.githubusercontent.com/RodriguezIA/paddleOCR/master/README.md)",
+      "Bash(curl -sL \"https://undraw.co/api/search?query=document\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(i['slug'], '-', i.get\\('title',''\\)\\) for i in d.get\\('illustrations', d\\)[:10]]\")",
+      "Bash(curl -sL \"https://undraw.co/illustrations/file-analysis\" -o /tmp/test.html)",
+      "Read(//tmp/**)",
+      "Bash(curl -sL \"https://undraw.co/api/illustrations?page=1&query=text\")",
+      "Bash(python3 -c \" import sys, json try: d = json.load\\(sys.stdin\\) if isinstance\\(d, list\\): for i in d[:10]: print\\(i\\) elif isinstance\\(d, dict\\): for k,v in list\\(d.items\\(\\)\\)[:5]: print\\(k,':', str\\(v\\)[:100]\\) except Exception as e: print\\('err:', e\\) print\\(sys.stdin.read\\(\\)[:500]\\) \")",
+      "Bash(curl -s https://api.github.com/repos/RodriguezIA/puyo-puyo-game)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:d[k] for k in ['name','description','language','topics','html_url','homepage'] if k in d}, indent=2\\)\\)\")",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/RodriguezIA/puyo-puyo-game/main/README.md\")",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/RodriguezIA/puyo-puyo-game/master/README.md\")",
+      "Bash(curl -s https://api.github.com/repos/RodriguezIA/puyo-puyo-game/contents)",
+      "Bash(python3 -c \"import sys,json; [print\\(f['name']\\) for f in json.load\\(sys.stdin\\)]\")",
+      "Bash(curl *)",
+      "Bash(pnpm astro *)"
     ]
   }
 }

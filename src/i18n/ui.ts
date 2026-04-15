@@ -63,17 +63,16 @@ export const ui = {
     "projects.visit": "Visit site",
     "projects.code": "View code",
 
-    // Contact
+    // Contact / Chat
     "contact.eyebrow": "Let's talk",
     "contact.title": "Contact",
-    "contact.description": "Have a question or a project in mind? Feel free to reach out.",
+    "contact.description": "Have a question or want to work together? Chat with my assistant or reach out directly.",
     "contact.location": "Location:",
-    "contact.name": "Name",
-    "contact.email": "Email",
-    "contact.message": "Message",
-    "contact.submit": "Submit",
-    "contact.success": "✅ Thank you for your message!",
-    "contact.error": "There was a problem sending your message.",
+    "chat.online": "Online · Ask me anything",
+    "chat.placeholder": "Ask about Edgar...",
+    "chat.send": "Send",
+    "chat.error": "Something went wrong. Please try again.",
+    "chat.thinking": "Thinking...",
 
     // Footer
     "footer.builtWith": "Built with",
@@ -136,17 +135,16 @@ export const ui = {
     "projects.visit": "Visitar sitio",
     "projects.code": "Ver código",
 
-    // Contact
+    // Contact / Chat
     "contact.eyebrow": "Hablemos",
     "contact.title": "Contacto",
-    "contact.description": "¿Tienes una pregunta o un proyecto en mente? No dudes en contactarme.",
+    "contact.description": "¿Tienes alguna pregunta o quieres trabajar juntos? Chatea con mi asistente o contáctame directamente.",
     "contact.location": "Ubicación:",
-    "contact.name": "Nombre",
-    "contact.email": "Email",
-    "contact.message": "Mensaje",
-    "contact.submit": "Enviar",
-    "contact.success": "✅ ¡Gracias por tu mensaje!",
-    "contact.error": "Hubo un problema al enviar tu mensaje.",
+    "chat.online": "En línea · Pregúntame lo que quieras",
+    "chat.placeholder": "Pregunta sobre Edgar...",
+    "chat.send": "Enviar",
+    "chat.error": "Algo salió mal. Inténtalo de nuevo.",
+    "chat.thinking": "Pensando...",
 
     // Footer
     "footer.builtWith": "Construido con",
