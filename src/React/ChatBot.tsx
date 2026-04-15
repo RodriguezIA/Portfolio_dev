@@ -336,7 +336,7 @@ const ChatBot: React.FC<Props> = ({ lang = defaultLang }) => {
             { role: "system", content: SYSTEM_PROMPT },
             ...messagesForAPI,
           ],
-          max_tokens: 500,
+          max_tokens: 300,
           temperature: 0.75,
         }),
       });
