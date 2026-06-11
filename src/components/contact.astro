@@ -11,74 +11,174 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section id="contact" class="w-full py-12 border-t border-[#ffffff10]">
-  <div class="max-w-5xl mx-auto">
-    <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">{t("contact.eyebrow")}</h2>
-    <h3 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-6">
-      {t("contact.title")}
-    </h3>
+<section id="contact" class="w-full py-16 border-t border-[#ffffff10]">
+  <div class="max-w-5xl xl:max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+    <div data-animate>
+      <h2 class="text-lg text-[var(--sec)] mb-2 shiny-sec">{t("contact.eyebrow")}</h2>
+      <h3 class="text-4xl md:text-5xl font-medium text-[var(--white)] mb-8">
+        {t("contact.title")}
+      </h3>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-      <!-- Left: description + contact links -->
-      <div class="text-[var(--white-icon)] space-y-6">
-        <p class="text-base leading-relaxed">{t("contact.description")}</p>
-
-        <div class="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 flex-shrink-0 text-[var(--sec)]">
-            <path d="M11.9999 2C8.13392 2 5.00098 5.13092 5.00098 9C5.00098 14.5 11.9999 22 11.9999 22C11.9999 22 18.999 14.5 18.999 9C18.999 5.13092 15.866 2 11.9999 2ZM11.9999 11.5C10.6192 11.5 9.49993 10.3808 9.49993 9C9.49993 7.61925 10.6192 6.5 11.9999 6.5C13.3807 6.5 14.4999 7.61925 14.4999 9C14.4999 10.3808 13.3807 11.5 11.9999 11.5Z"/>
-          </svg>
-          <span>{t("contact.location")}</span>
-          <span class="text-[var(--white)]">Monterrey, Nuevo León, México</span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+      <!-- Izquierda: terminal estilo Omarchy -->
+      <div
+        class="wm-window flex flex-col rounded-lg border border-[#ffffff14] bg-[#121110] overflow-hidden transition-all duration-300"
+        data-animate
+      >
+        <!-- Barra de título -->
+        <div class="flex items-center gap-2.5 px-3.5 py-2 bg-[#1a1815] border-b border-[#ffffff0d] font-mono text-[11px]">
+          <span class="flex gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-[#c45f3c]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#e3b341]"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-[#7fb069]"></span>
+          </span>
+          <span class="text-[var(--white-icon)]">edgar@dev: ~/contact</span>
+          <span class="ml-auto text-[var(--white-icon)] opacity-60" id="contact-clock"></span>
         </div>
 
-        <!-- Direct contact links -->
-        <div class="flex flex-col gap-3">
-          <a
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=edgaralanra@gmail.com&su=Hey%20Edgar!"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 p-3 rounded-xl bg-[#1414149c] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-colors group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[var(--sec)]">
-              <path d="m18.73 5.41l-1.28 1L12 10.46L6.55 6.37l-1.28-1A2 2 0 0 0 2 7.05v11.59A1.36 1.36 0 0 0 3.36 20h3.19v-7.72L12 16.37l5.45-4.09V20h3.19A1.36 1.36 0 0 0 22 18.64V7.05a2 2 0 0 0-3.27-1.64"/>
-            </svg>
-            <span class="text-sm text-[var(--white-icon)] group-hover:text-[var(--white)] transition-colors">
-              edgaralanra@gmail.com
-            </span>
-          </a>
+        <!-- Cuerpo del terminal -->
+        <div class="flex-1 p-5 font-mono text-sm leading-7 text-[var(--white-icon)]">
+          <p>
+            <span class="text-[#7fb069]">edgar@dev</span><span class="opacity-60">:</span><span class="text-[var(--sec)]">~</span><span class="opacity-60">$</span>
+            <span class="terminal-typed text-[var(--white)]" data-text="whoami --contact"></span><span class="terminal-caret">▍</span>
+          </p>
 
-          <a
-            href="https://github.com/RodriguezIA"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 p-3 rounded-xl bg-[#1414149c] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-colors group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[var(--sec)]">
-              <path d="M12.001 2C6.47598 2 2.00098 6.475 2.00098 12C2.00098 16.425 4.86348 20.1625 8.83848 21.4875C9.33848 21.575 9.52598 21.275 9.52598 21.0125C9.52598 20.775 9.51348 19.9875 9.51348 19.15C7.00098 19.6125 6.35098 18.5375 6.15098 17.975C6.03848 17.6875 5.55098 16.8 5.12598 16.5625C4.77598 16.375 4.27598 15.9125 5.11348 15.9C5.90098 15.8875 6.46348 16.625 6.65098 16.925C7.55098 18.4375 8.98848 18.0125 9.56348 17.75C9.65098 17.1 9.91348 16.6625 10.201 16.4125C7.97598 16.1625 5.65098 15.3 5.65098 11.475C5.65098 10.3875 6.03848 9.4875 6.67598 8.7875C6.57598 8.5375 6.22598 7.5125 6.77598 6.1375C6.77598 6.1375 7.61348 5.875 9.52598 7.1625C10.326 6.9375 11.176 6.825 12.026 6.825C12.876 6.825 13.726 6.9375 14.526 7.1625C16.4385 5.8625 17.276 6.1375 17.276 6.1375C17.826 7.5125 17.476 8.5375 17.376 8.7875C18.0135 9.4875 18.401 10.375 18.401 11.475C18.401 15.3125 16.0635 16.1625 13.8385 16.4125C14.201 16.725 14.5135 17.325 14.5135 18.2625C14.5135 19.6 14.501 20.675 14.501 21.0125C14.501 21.275 14.6885 21.5875 15.1885 21.4875C19.259 20.1133 21.9999 16.2963 22.001 12C22.001 6.475 17.526 2 12.001 2Z"/>
-            </svg>
-            <span class="text-sm text-[var(--white-icon)] group-hover:text-[var(--white)] transition-colors">
-              github.com/RodriguezIA
-            </span>
-          </a>
+          <div class="terminal-output opacity-0 mt-2 space-y-1.5">
+            <p><span class="text-[var(--sec)]">name</span><span class="opacity-50">:</span> Edgar Alan Rodriguez Amador</p>
+            <p><span class="text-[var(--sec)]">role</span><span class="opacity-50">:</span> {t("hero.role")}</p>
+            <p>
+              <span class="text-[var(--sec)]">email</span><span class="opacity-50">:</span>
+              <span class="text-[var(--white)]" id="contact-email">edgaralanra@gmail.com</span>
+            </p>
+            <p><span class="text-[var(--sec)]">location</span><span class="opacity-50">:</span> Monterrey, Nuevo León, MX</p>
+            <p>
+              <span class="text-[var(--sec)]">status</span><span class="opacity-50">:</span>
+              <span class="text-[#7fb069]">● {t("contact.openToWork")}</span>
+            </p>
+            <p class="pt-1">
+              <span class="text-[var(--sec)]">links</span><span class="opacity-50">:</span>
+              <a href="https://github.com/RodriguezIA" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted underline-offset-4 hover:text-[var(--sec)] transition-colors">github</a>
+              <span class="opacity-40">·</span>
+              <a href="http://www.linkedin.com/in/edgar-alan-rodriguez-amador-3745b8148" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted underline-offset-4 hover:text-[var(--sec)] transition-colors">linkedin</a>
+            </p>
+          </div>
 
-          <a
-            href="http://www.linkedin.com/in/edgar-alan-rodriguez-amador-3745b8148"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 p-3 rounded-xl bg-[#1414149c] border border-[var(--white-icon-tr)] hover:border-[var(--sec)] transition-colors group"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-[var(--sec)]">
-              <path d="M18.3362 18.339H15.6707V14.1622C15.6707 13.1662 15.6505 11.8845 14.2817 11.8845C12.892 11.8845 12.6797 12.9683 12.6797 14.0887V18.339H10.0142V9.75H12.5747V10.9207H12.6092C12.967 10.2457 13.837 9.53325 15.1367 9.53325C17.8375 9.53325 18.337 11.3108 18.337 13.6245V18.339H18.3362ZM7.00373 8.57475C6.14573 8.57475 5.45648 7.88025 5.45648 7.026C5.45648 6.1725 6.14648 5.47875 7.00373 5.47875C7.85873 5.47875 8.55173 6.1725 8.55173 7.026C8.55173 7.88025 7.85798 8.57475 7.00373 8.57475ZM8.34023 18.339H5.66723V9.75H8.34023V18.339ZM19.6697 3H4.32923C3.59498 3 3.00098 3.5805 3.00098 4.29675V19.7033C3.00098 20.4202 3.59498 21 4.32923 21H19.6675C20.401 21 21.001 20.4202 21.001 19.7033V4.29675C21.001 3.5805 20.401 3 19.6675 3H19.6697Z"/>
-            </svg>
-            <span class="text-sm text-[var(--white-icon)] group-hover:text-[var(--white)] transition-colors">
-              LinkedIn
-            </span>
-          </a>
+          <!-- Acciones -->
+          <div class="terminal-output opacity-0 flex flex-wrap gap-3 mt-6">
+            <button
+              id="copy-email"
+              data-copied={t("contact.copied")}
+              class="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-[var(--sec)] text-[#1a0f08] font-semibold text-xs hover:bg-[var(--sec-soft)] transition-colors cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                <path d="M7 4V2H17V4H20.0066C20.5552 4 21 4.44495 21 4.9934V21.0066C21 21.5552 20.5551 22 20.0066 22H3.9934C3.44476 22 3 21.5551 3 21.0066V4.9934C3 4.44476 3.44495 4 3.9934 4H7ZM7 6H5V20H19V6H17V8H7V6ZM9 4V6H15V4H9Z"></path>
+              </svg>
+              <span data-copy-label>{t("contact.copy")}</span>
+            </button>
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=edgaralanra@gmail.com&su=Hey%20Edgar!"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2.5 rounded border border-[var(--white-icon-tr)] text-[var(--white-icon)] text-xs font-semibold hover:border-[var(--sec)] hover:text-[var(--sec)] transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+                <path d="m18.73 5.41l-1.28 1L12 10.46L6.55 6.37l-1.28-1A2 2 0 0 0 2 7.05v11.59A1.36 1.36 0 0 0 3.36 20h3.19v-7.72L12 16.37l5.45-4.09V20h3.19A1.36 1.36 0 0 0 22 18.64V7.05a2 2 0 0 0-3.27-1.64"></path>
+              </svg>
+              {t("hero.cta2")}
+            </a>
+          </div>
         </div>
       </div>
 
-      <!-- Right: Chatbot -->
-      <ChatBot client:only="react" lang={lang} />
+      <!-- Derecha: chatbot (ventana hermana) -->
+      <div data-animate>
+        <ChatBot client:only="react" lang={lang} />
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  .wm-window:hover {
+    border-color: var(--sec);
+    box-shadow: 0 0 0 1px var(--sec), 0 8px 40px -12px rgba(217, 119, 87, 0.35);
+  }
+  .terminal-caret {
+    animation: caret-blink 1s steps(1) infinite;
+    color: var(--sec);
+  }
+  @keyframes caret-blink {
+    50% { opacity: 0; }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Reloj local (Monterrey es la zona del visitante objetivo; usamos la del navegador)
+  const clock = document.getElementById("contact-clock");
+  const tick = () => {
+    if (!clock) return;
+    clock.textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+  tick();
+  setInterval(tick, 30_000);
+
+  // Tipeo del comando cuando la sección entra en viewport
+  const typed = document.querySelector<HTMLElement>(".terminal-typed");
+  const outputs = document.querySelectorAll<HTMLElement>(".terminal-output");
+
+  if (typed) {
+    const text = typed.dataset.text || "";
+    const reveal = () => {
+      if (reduced) {
+        typed.textContent = text;
+        outputs.forEach((o) => (o.style.opacity = "1"));
+        return;
+      }
+      const chars = { i: 0 };
+      gsap.to(chars, {
+        i: text.length,
+        duration: text.length * 0.06,
+        ease: "none",
+        onUpdate: () => (typed.textContent = text.slice(0, Math.round(chars.i))),
+        onComplete: () => {
+          gsap.to(outputs, { opacity: 1, y: 0, duration: 0.6, stagger: 0.25, ease: "power2.out" });
+        },
+      });
+      gsap.set(outputs, { y: 10 });
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          io.disconnect();
+          reveal();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    io.observe(typed);
+  }
+
+  // Copiar correo
+  const copyBtn = document.getElementById("copy-email");
+  const copyLabel = copyBtn?.querySelector("[data-copy-label]");
+  const original = copyLabel?.textContent || "";
+  copyBtn?.addEventListener("click", async () => {
+    const email = document.getElementById("contact-email")?.textContent?.trim() || "";
+    try {
+      await navigator.clipboard.writeText(email);
+      if (copyLabel) {
+        copyLabel.textContent = copyBtn.dataset.copied || "✓";
+        setTimeout(() => (copyLabel.textContent = original), 2000);
+      }
+    } catch {
+      // Clipboard no disponible — abrir mailto como fallback
+      window.location.href = `mailto:${email}`;
+    }
+  });
+</script>

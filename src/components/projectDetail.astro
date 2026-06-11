@@ -1,0 +1,199 @@
+---
+import type { Lang } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+import { noImageBgs, noImageGlow, projects, type Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const t = useTranslations(lang);
+
+const base = lang === "es" ? "/es" : "";
+const otherBase = lang === "es" ? "" : "/es";
+const otherLangLabel = lang === "es" ? "EN" : "ES";
+
+const idx = projects.findIndex((p) => p.slug === project.slug);
+const fallbackBg = noImageBgs[idx % noImageBgs.length];
+
+// Prev / next navigation between projects
+const sorted = [...projects].sort((a, b) => a.priority - b.priority);
+const pos = sorted.findIndex((p) => p.slug === project.slug);
+const prev = sorted[(pos - 1 + sorted.length) % sorted.length];
+const next = sorted[(pos + 1) % sorted.length];
+---
+
+<main class="text-[var(--white)] max-w-4xl xl:max-w-6xl mx-auto px-6 sm:px-10 pb-20">
+  <!-- Top bar -->
+  <div class="flex items-center justify-between pt-8 pb-6">
+    <a
+      href={`${base}/#projects`}
+      class="flex items-center gap-2 text-[var(--white-icon)] hover:text-white transition duration-300 border border-[var(--white-icon-tr)] px-4 py-2 rounded-full bg-[#1414149c] hover:bg-[var(--white-icon-tr)] text-sm"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+        <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" />
+      </svg>
+      {t("projects.back")}
+    </a>
+    <a
+      href={`${otherBase}/projects/${project.slug}/`}
+      class="text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors text-sm font-medium border border-[var(--white-icon-tr)] px-4 py-2 rounded-full bg-[#1414149c]"
+      id="lang-switch-detail"
+      data-lang={lang === "es" ? "en" : "es"}
+    >
+      {otherLangLabel}
+    </a>
+  </div>
+
+  <!-- Hero -->
+  <div class="relative h-64 md:h-96 xl:h-[460px] overflow-hidden rounded-3xl border border-[#ffffff10]" data-hero-item>
+    {project.image ? (
+      <img src={project.image} alt={project.title} class="w-full h-full object-cover scale-110" data-parallax="0.1" />
+    ) : (
+      <div class={`w-full h-full ${fallbackBg}`}>
+        <div class="absolute inset-0 opacity-25" style={`background-image: ${noImageGlow}`} />
+      </div>
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[#0d0c0a80] to-transparent" />
+    <div class="absolute bottom-0 left-0 p-6 md:p-8">
+      <span class="inline-block mb-3 px-3 py-1 text-xs rounded-full bg-[#ffffff0d] border border-[#ffffff15] text-[var(--white-icon)]">
+        {project.status[lang]}
+      </span>
+      <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">
+        {project.title}
+      </h1>
+    </div>
+  </div>
+
+  <div class="mt-10 space-y-10">
+    <!-- About -->
+    <div data-animate>
+      <p class="text-xs font-semibold uppercase tracking-widest text-[var(--sec)] mb-3">
+        {t("projects.about")}
+      </p>
+      <p class="text-[var(--white)] leading-relaxed text-base md:text-lg">
+        {project.description[lang]}
+      </p>
+    </div>
+
+    <!-- Highlights -->
+    {project.highlights && project.highlights.length > 0 && (
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest text-[var(--sec)] mb-4">
+          {t("projects.highlights")}
+        </p>
+        <ul class="space-y-3" data-animate-group>
+          {project.highlights.map((h) => (
+            <li class="flex items-start gap-3 bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-2xl p-4">
+              <span class="mt-1 size-2 rounded-full bg-[var(--sec)] flex-shrink-0"></span>
+              <span class="text-[var(--white)] text-sm md:text-base">{h[lang]}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Tech -->
+    <div data-animate>
+      <p class="text-xs font-semibold uppercase tracking-widest text-[var(--sec)] mb-4">
+        {t("projects.builtWith")}
+      </p>
+      <div class="flex flex-wrap gap-2">
+        {project.tech.map((tech) => (
+          <span class="px-3 py-1.5 text-sm rounded-full bg-[#1414149c] border border-[#ffffff10] text-[var(--white)]">
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Gallery -->
+    {project.gallery && project.gallery.length > 0 && (
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-widest text-[var(--sec)] mb-4">
+          {t("projects.gallery")}
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5" data-animate-group>
+          {project.gallery.map((item) => (
+            <figure>
+              <img
+                src={item.src}
+                alt={item.caption[lang]}
+                class="w-full rounded-2xl border border-[#ffffff10]"
+                loading="lazy"
+              />
+              <figcaption class="mt-2 text-xs text-center text-[var(--white-icon)]">
+                {item.caption[lang]}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Links -->
+    {(project.preview || project.link) && (
+      <div class="flex flex-wrap gap-3 pt-2">
+        {project.preview && (
+          <a
+            href={project.preview}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--sec)] text-[#1a120c] font-semibold hover:bg-[var(--sec-soft)] transition duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+              <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z" />
+            </svg>
+            {t("projects.visit")}
+          </a>
+        )}
+        {project.link && (
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#1414149c] border border-[#ffffff10] text-[var(--white-icon)] hover:text-white hover:bg-[var(--white-icon-tr)] transition duration-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+              <path d="M24 12L18.3431 17.6569L16.9289 16.2426L21.1716 12L16.9289 7.75736L18.3431 6.34315L24 12ZM2.82843 12L7.07107 16.2426L5.65685 17.6569L0 12L5.65685 6.34315L7.07107 7.75736L2.82843 12ZM9.78845 21H7.66009L14.2116 3H16.3399L9.78845 21Z" />
+            </svg>
+            {t("projects.code")}
+          </a>
+        )}
+      </div>
+    )}
+
+    <!-- Prev / Next -->
+    <div class="flex justify-between gap-3 pt-6 border-t border-[#ffffff10]">
+      <a
+        href={`${base}/projects/${prev.slug}/`}
+        class="flex items-center gap-2 text-[var(--white-icon)] hover:text-white transition duration-300 text-sm"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
+          <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" />
+        </svg>
+        {prev.title}
+      </a>
+      <a
+        href={`${base}/projects/${next.slug}/`}
+        class="flex items-center gap-2 text-[var(--white-icon)] hover:text-white transition duration-300 text-sm"
+      >
+        {next.title}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 rotate-180">
+          <path d="M7.82843 10.9999H20V12.9999H7.82843L13.1924 18.3638L11.7782 19.778L4 11.9999L11.7782 4.22168L13.1924 5.63589L7.82843 10.9999Z" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Persist language preference when switching from a detail page
+  const langSwitch = document.getElementById("lang-switch-detail");
+  langSwitch?.addEventListener("click", () => {
+    const newLang = langSwitch.getAttribute("data-lang");
+    if (newLang) localStorage.setItem("preferred-lang", newLang);
+  });
+</script>

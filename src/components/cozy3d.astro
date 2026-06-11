@@ -1,0 +1,142 @@
+---
+// Cozy isometric room — real GLB model ("Jason's Isometric Room" by Jason Toff,
+// CC-BY via poly.pizza) rendered with Three.js. Strong mouse-follow rotation,
+// floating bob, animated intro and scroll-driven spin.
+---
+
+<div class="cozy3d-wrap relative w-full select-none" aria-hidden="true">
+  <div id="cozy3d" class="w-full aspect-square sm:aspect-[5/4] max-h-[78vh] cursor-grab"></div>
+  <div class="cozy3d-shadow"></div>
+</div>
+
+<style>
+  .cozy3d-shadow {
+    position: absolute;
+    left: 50%;
+    bottom: 4%;
+    width: 62%;
+    height: 7%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 70%);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  import { gsap } from "gsap";
+
+  const container = document.getElementById("cozy3d");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (container) {
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+    camera.position.set(5.2, 3.9, 5.2);
+    camera.lookAt(0, 0.2, 0);
+
+    // Warm lighting that matches the site palette
+    scene.add(new THREE.HemisphereLight(0xfff2e0, 0x2a1d12, 1.25));
+    const key = new THREE.DirectionalLight(0xffe9d6, 2.2);
+    key.position.set(6, 9, 5);
+    scene.add(key);
+    const warm = new THREE.PointLight(0xd97757, 30, 16, 1.6);
+    warm.position.set(-4, 3, -3);
+    scene.add(warm);
+    const fill = new THREE.DirectionalLight(0xe3b341, 0.5);
+    fill.position.set(-5, 2, 6);
+    scene.add(fill);
+
+    const pivot = new THREE.Group();
+    scene.add(pivot);
+
+    new GLTFLoader().load("/models/room.glb", (gltf) => {
+      const model = gltf.scene;
+
+      // Center the model and normalize its size
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const scale = 4.6 / Math.max(size.x, size.y, size.z);
+      model.position.sub(center).multiplyScalar(scale);
+      model.position.y += 0.1;
+      model.scale.setScalar(scale);
+      pivot.add(model);
+
+      // Dramatic intro: room spins up into place
+      if (!reduced) {
+        gsap.from(pivot.scale, { x: 0.4, y: 0.4, z: 0.4, duration: 1.6, ease: "elastic.out(1, 0.55)", delay: 0.35 });
+        gsap.from(pivot.rotation, { y: -Math.PI * 1.5, duration: 1.8, ease: "power4.out", delay: 0.3 });
+      }
+    });
+
+    // ---------- Mouse interaction (strong, whole-page tracking) ----------
+    let targetRY = 0;
+    let targetRX = 0;
+    if (!reduced) {
+      window.addEventListener(
+        "mousemove",
+        (e) => {
+          const nx = (e.clientX / window.innerWidth) * 2 - 1;
+          const ny = (e.clientY / window.innerHeight) * 2 - 1;
+          targetRY = nx * 0.85;
+          targetRX = ny * 0.35;
+        },
+        { passive: true }
+      );
+
+      // Touch: swipe rotates the room
+      let lastX = 0;
+      container.addEventListener("touchstart", (e) => (lastX = e.touches[0].clientX), { passive: true });
+      container.addEventListener(
+        "touchmove",
+        (e) => {
+          targetRY += (e.touches[0].clientX - lastX) * 0.008;
+          lastX = e.touches[0].clientX;
+        },
+        { passive: true }
+      );
+    }
+
+    // ---------- Resize ----------
+    const resize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    };
+    new ResizeObserver(resize).observe(container);
+    resize();
+
+    // ---------- Render loop (paused while off-screen) ----------
+    let visible = true;
+    new IntersectionObserver(([entry]) => (visible = entry.isIntersecting)).observe(container);
+
+    const clock = new THREE.Clock();
+
+    renderer.setAnimationLoop(() => {
+      if (!visible) return;
+      const t = clock.getElapsedTime();
+
+      if (!reduced) {
+        // Idle drift keeps the room alive even without mouse movement
+        const idleY = Math.sin(t * 0.4) * 0.12;
+        pivot.position.y = Math.sin(t * 0.9) * 0.14;
+        pivot.rotation.y += (targetRY + idleY - pivot.rotation.y) * 0.06;
+        pivot.rotation.x += (targetRX * 0.5 - pivot.rotation.x) * 0.06;
+      }
+
+      renderer.render(scene, camera);
+    });
+  }
+</script>

@@ -76,6 +76,10 @@ const { title, lang } = Astro.props;
         ];
         var STORAGE_KEY = "preferred-lang";
 
+        // Only auto-redirect on the home pages — never on detail pages
+        var path = window.location.pathname;
+        if (path !== "/" && path !== "/es" && path !== "/es/") return;
+
         function redirect(lang) {
           var isEs = window.location.pathname.startsWith("/es");
           if (lang === "es" && !isEs) {
@@ -114,10 +118,141 @@ const { title, lang } = Astro.props;
       })();
     </script>
   </head>
-  <body class="bg-[--background] sm:px-28 lg:px-20 px-9">
-    <slot />
+  <body class="bg-[--background] overflow-x-hidden">
+    <div id="cursor-dot" aria-hidden="true"></div>
+    <div id="cursor-ring" aria-hidden="true"></div>
+    <slot name="nav" />
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </div>
   </body>
 </html>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { ScrollSmoother } from "gsap/ScrollSmoother";
+
+  gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduced) {
+    const smoother = ScrollSmoother.create({
+      wrapper: "#smooth-wrapper",
+      content: "#smooth-content",
+      smooth: 1.2,
+      effects: true,
+      smoothTouch: 0.1,
+    });
+
+    // In-page anchors scroll through the smoother
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const target = document.querySelector(a.getAttribute("href") || "");
+        if (target) {
+          e.preventDefault();
+          smoother.scrollTo(target, true, "top 80px");
+        }
+      });
+    });
+
+    // Reveals via IntersectionObserver — independent of ScrollSmoother's
+    // transformed content, so elements can never get stuck hidden.
+    const revealIO = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const el = entry.target as HTMLElement;
+          revealIO.unobserve(el);
+          if (el.hasAttribute("data-animate-group")) {
+            gsap.to(el.children, {
+              y: 0,
+              autoAlpha: 1,
+              duration: 0.85,
+              ease: "power3.out",
+              stagger: 0.12,
+            });
+          } else {
+            gsap.to(el, { y: 0, autoAlpha: 1, duration: 1, ease: "power3.out" });
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px" }
+    );
+
+    gsap.utils.toArray<HTMLElement>("[data-animate]").forEach((el) => {
+      gsap.set(el, { y: 48, autoAlpha: 0 });
+      revealIO.observe(el);
+    });
+    gsap.utils.toArray<HTMLElement>("[data-animate-group]").forEach((group) => {
+      gsap.set(group.children, { y: 40, autoAlpha: 0 });
+      revealIO.observe(group);
+    });
+
+    // Recalculate trigger positions once everything (images, 3D, fonts) loaded
+    window.addEventListener("load", () => ScrollTrigger.refresh());
+
+    // Scroll parallax: data-parallax="0.25" → element drifts as you scroll
+    gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+      const speed = parseFloat(el.dataset.parallax || "0.2");
+      gsap.to(el, {
+        yPercent: speed * 100,
+        ease: "none",
+        scrollTrigger: {
+          trigger: el.parentElement ?? el,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    });
+
+    // Hero entrance (runs on load, no scroll needed)
+    const heroItems = document.querySelectorAll("[data-hero-item]");
+    if (heroItems.length) {
+      gsap.from(heroItems, {
+        y: 36,
+        autoAlpha: 0,
+        duration: 1.1,
+        ease: "power3.out",
+        stagger: 0.14,
+        delay: 0.15,
+      });
+    }
+
+    // Custom cursor (desktop fine pointers only)
+    const dot = document.getElementById("cursor-dot");
+    const ring = document.getElementById("cursor-ring");
+    if (dot && ring && window.matchMedia("(pointer: fine)").matches) {
+      document.documentElement.classList.add("has-custom-cursor");
+      const dotX = gsap.quickTo(dot, "x", { duration: 0.08, ease: "power2.out" });
+      const dotY = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power2.out" });
+      const ringX = gsap.quickTo(ring, "x", { duration: 0.45, ease: "power3.out" });
+      const ringY = gsap.quickTo(ring, "y", { duration: 0.45, ease: "power3.out" });
+
+      window.addEventListener(
+        "mousemove",
+        (e) => {
+          dotX(e.clientX);
+          dotY(e.clientY);
+          ringX(e.clientX);
+          ringY(e.clientY);
+        },
+        { passive: true }
+      );
+
+      // Grow the ring over interactive elements
+      document.addEventListener("mouseover", (e) => {
+        const interactive = (e.target as HTMLElement).closest("a, button, [role='button'], input, textarea");
+        gsap.to(ring, { scale: interactive ? 2.2 : 1, duration: 0.3, ease: "power2.out" });
+        gsap.to(dot, { scale: interactive ? 0.4 : 1, duration: 0.3 });
+      });
+    }
+  }
+</script>
 
 <style is:global>
   @font-face {
@@ -130,11 +265,14 @@ const { title, lang } = Astro.props;
   }
 
   :root {
-    --background: #101010;
-    --sec: #a476ff;
-    --white: #dfdfdf;
-    --white-icon: #f3f3f398;
-    --white-icon-tr: #f3f3f310;
+    --background: #0d0c0a;
+    --sec: #d97757;
+    --sec-soft: #e8956f;
+    --amber: #e3b341;
+    --cream: #f0eee6;
+    --white: #e6e3dd;
+    --white-icon: #f0eee698;
+    --white-icon-tr: #f0eee610;
   }
 
   * {
@@ -168,11 +306,41 @@ const { title, lang } = Astro.props;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--pink);
+    background: var(--sec);
   }
 
   * {
     scrollbar-width: thin;
     scrollbar-color: var(--line) var(--container);
+  }
+
+  /* ---------- Custom cursor ---------- */
+  #cursor-dot,
+  #cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 9999px;
+    transform: translate(-100px, -100px);
+    display: none;
+  }
+  #cursor-dot {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: var(--sec);
+  }
+  #cursor-ring {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border: 1.5px solid var(--sec);
+    opacity: 0.55;
+  }
+  .has-custom-cursor #cursor-dot,
+  .has-custom-cursor #cursor-ring {
+    display: block;
   }
 </style>

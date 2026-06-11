@@ -1,0 +1,18 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import ExperienceDetail from "@/components/experienceDetail.astro";
+import { experience } from "@/data/experience";
+
+export function getStaticPaths() {
+  return experience.map((exp) => ({
+    params: { slug: exp.slug },
+    props: { exp },
+  }));
+}
+
+const { exp } = Astro.props;
+---
+
+<Layout title={`${exp.role} · ${exp.company}`} lang="es">
+  <ExperienceDetail exp={exp} lang="es" />
+</Layout>

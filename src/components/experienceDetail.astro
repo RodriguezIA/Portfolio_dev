@@ -1,0 +1,100 @@
+---
+import type { Experience } from "../data/experience";
+import type { Lang } from "../i18n/ui";
+import { useTranslations } from "../i18n/utils";
+
+interface Props {
+  exp: Experience;
+  lang: Lang;
+}
+
+const { exp, lang } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === "es" ? "/es" : "";
+---
+
+<main class="text-[var(--white)] max-w-4xl mx-auto px-6 sm:px-10 pt-28 pb-20">
+  <!-- Volver -->
+  <a
+    href={`${base}/#home`}
+    class="inline-flex items-center gap-2 text-sm text-[var(--white-icon)] hover:text-[var(--sec)] transition-colors mb-10"
+    data-animate
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4 rotate-180">
+      <path d="M16.0037 9.41421L7.39712 18.0208L5.98291 16.6066L14.5895 8H7.00373V6H18.0037V17H16.0037V9.41421Z"></path>
+    </svg>
+    {t("exp.back")}
+  </a>
+
+  <!-- Encabezado -->
+  <header class="mb-12" data-animate>
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <span class="px-3 py-1 text-xs font-semibold uppercase tracking-widest rounded-full border border-[var(--sec)] text-[var(--sec)]">
+        {exp.period[lang]}
+      </span>
+      {exp.current && (
+        <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold uppercase tracking-widest rounded-full bg-[#7fb06922] border border-[#7fb06955] text-[#7fb069]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#7fb069] animate-pulse"></span>
+          {t("exp.current")}
+        </span>
+      )}
+    </div>
+    <h1 class="text-4xl md:text-6xl font-black leading-tight">
+      {exp.role}
+    </h1>
+    <p class="text-xl md:text-2xl text-[var(--sec)] font-semibold mt-2">{exp.company}</p>
+    <p class="text-sm text-[var(--white-icon)] mt-2">{exp.location[lang]}</p>
+  </header>
+
+  <!-- Sobre el rol -->
+  <section class="mb-12" data-animate>
+    <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--white-icon)] mb-4">
+      {t("exp.about")}
+    </h2>
+    <p class="text-lg text-[var(--white)] leading-relaxed opacity-90">
+      {exp.summary[lang]}
+    </p>
+  </section>
+
+  <!-- Qué aporté -->
+  <section class="mb-12" data-animate-group>
+    <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--white-icon)] mb-5">
+      {t("exp.contributions")}
+    </h2>
+    {exp.contributions.map((c, i) => (
+      <div class="flex items-start gap-4 bg-[#1414149c] border border-[var(--white-icon-tr)] rounded-2xl p-5 mb-3 hover:border-[var(--sec)] transition-colors duration-300">
+        <span class="font-mono text-sm text-[var(--sec)] pt-0.5">0{i + 1}</span>
+        <p class="text-[var(--white-icon)] leading-relaxed">{c[lang]}</p>
+      </div>
+    ))}
+  </section>
+
+  <!-- Logros -->
+  {exp.achievements && (
+    <section class="mb-12" data-animate-group>
+      <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--white-icon)] mb-5">
+        {t("exp.achievements")}
+      </h2>
+      {exp.achievements.map((a) => (
+        <div class="flex items-start gap-3 mb-3">
+          <span class="text-[var(--amber)] text-lg leading-none pt-0.5">★</span>
+          <p class="text-[var(--white)] opacity-90 leading-relaxed">{a[lang]}</p>
+        </div>
+      ))}
+    </section>
+  )}
+
+  <!-- Stack -->
+  <section data-animate>
+    <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--white-icon)] mb-5">
+      {t("exp.stack")}
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      {exp.stack.map((tech) => (
+        <span class="px-4 py-2 text-sm font-mono rounded-full bg-[#1414149c] border border-[var(--white-icon-tr)] text-[var(--white-icon)] hover:border-[var(--sec)] hover:text-[var(--sec)] transition-colors duration-300">
+          {tech}
+        </span>
+      ))}
+    </div>
+  </section>
+</main>

@@ -24,7 +24,23 @@
       "Bash(curl -s https://api.github.com/repos/RodriguezIA/puyo-puyo-game/contents)",
       "Bash(python3 -c \"import sys,json; [print\\(f['name']\\) for f in json.load\\(sys.stdin\\)]\")",
       "Bash(curl *)",
-      "Bash(pnpm astro *)"
+      "Bash(pnpm astro *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm install *)",
+      "Bash(node -e ' *)",
+      "Bash(pnpm rebuild *)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(sed -i 's|class=\"max-w-5xl xl:max-w-7xl mx-auto\"|class=\"max-w-5xl xl:max-w-7xl mx-auto px-6 sm:px-10 lg:px-16\"|' src/components/projects.astro src/components/footer.astro src/components/contact.astro)",
+      "Bash(sed -i 's|max-w-4xl xl:max-w-6xl mx-auto pb-20|max-w-4xl xl:max-w-6xl mx-auto px-6 sm:px-10 pb-20|' src/components/projectDetail.astro)",
+      "Skill(run)",
+      "Bash(cp -r /root/webs/Portfolio_dev/dist/* /var/www/promotoria/)",
+      "Bash(systemctl reload *)",
+      "WebSearch",
+      "Bash(grep -oE '\\\\{\"ID\":\"[^\"]*\",\"Title\":\"[^\"]*\"[^}]*')",
+      "Bash(grep -oE '\"Title\":\"[^\"]{0,40}\"' /tmp/cozy.html)",
+      "Bash(npx -y playwright --version)",
+      "Bash(npx playwright *)"
     ]
   }
 }
